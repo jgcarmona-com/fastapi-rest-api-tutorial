@@ -1,0 +1,7 @@
+debugpy
+fastapi
+pydantic
+pytest
+pytest-cov
+pytest-dotenv
+uvicorn

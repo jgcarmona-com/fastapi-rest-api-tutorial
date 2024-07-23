@@ -1,0 +1,50 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "QA API (Local)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/qa_api/main.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONUNBUFFERED": "1",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "args": [
+                "run"
+            ]
+        },
+        {
+            "name": "pytest QA API",
+            "type": "debugpy",
+            "request": "launch",
+            "purpose": [
+              "debug-test"
+            ],
+            "env": {
+              "PYTEST_ADDOPTS": "--no-cov"
+            },
+            "module": "pytest",
+            "cwd": "${workspaceRoot}/tests",
+            "envFile": "${workspaceFolder}/tests/.env",
+            "console": "integratedTerminal"
+          },
+        {
+            "name": "QA API (Docker)",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/qa_api",
+                    "remoteRoot": "/app/qa_api"
+                }
+            ],
+            "preLaunchTask": "Docker: Build and Run"
+        }
+    ]
+}
