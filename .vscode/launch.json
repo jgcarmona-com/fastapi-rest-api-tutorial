@@ -20,18 +20,18 @@
             "type": "debugpy",
             "request": "launch",
             "purpose": [
-              "debug-test"
+                "debug-test"
             ],
             "env": {
-              "PYTEST_ADDOPTS": "--no-cov"
+                "PYTEST_ADDOPTS": "--no-cov"
             },
             "module": "pytest",
             "cwd": "${workspaceRoot}/tests",
             "envFile": "${workspaceFolder}/tests/.env",
             "console": "integratedTerminal"
-          },
+        },
         {
-            "name": "QA API (Docker)",
+            "name": "QA API (Remote Attach)",
             "type": "debugpy",
             "request": "attach",
             "connect": {
@@ -40,11 +40,10 @@
             },
             "pathMappings": [
                 {
-                    "localRoot": "${workspaceFolder}/qa_api",
-                    "remoteRoot": "/app/qa_api"
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/app"
                 }
-            ],
-            "preLaunchTask": "Docker: Build and Run"
+            ]
         }
     ]
 }

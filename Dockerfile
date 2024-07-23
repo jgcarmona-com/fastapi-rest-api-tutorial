@@ -14,5 +14,8 @@ WORKDIR /app
 COPY . /app
 
 EXPOSE 8000
+ # Expose the debugpy port
+EXPOSE 5678 
+
 
 CMD ["uvicorn", "qa_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

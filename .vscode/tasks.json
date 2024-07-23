@@ -4,14 +4,14 @@
         {
             "label": "Docker: Build and Run",
             "type": "shell",
-            "command": "docker build -t qa_api . && docker run -d -p 8000:8000 --name qa-api-container qa_api",
+            "command": "docker build -t qa_api . && docker run -d -p 8000:8000 -p 5678:5678 --name qa-api-container -e DEBUG_MODE=true qa_api",
             "problemMatcher": [],
             "isBackground": false
         },
         {
             "label": "Docker: Stop and Remove",
             "type": "shell",
-            "command": "docker stop qa_api-container && docker rm qa-api-container",
+            "command": "docker stop qa-api-container && docker rm qa-api-container",
             "problemMatcher": [],
             "isBackground": false
         }

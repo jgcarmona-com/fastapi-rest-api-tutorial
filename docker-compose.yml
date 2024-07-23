@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  qa_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+      - "5678:5678"  # Port for debugpy
+    environment:
+      - DEBUG_MODE=true
+    volumes:
+      - .:/app
+    command: ["sh", "-c", "python -m debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn qa_api.main:app --host 0.0.0.0 --port 8000 --reload"]

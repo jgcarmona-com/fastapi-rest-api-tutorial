@@ -49,3 +49,21 @@ Para ejecutar la aplicación en Docker, selecciona la configuración QA API (Doc
 
 ## Ejecutar Pruebas
 Para ejecutar las pruebas, selecciona la configuración pytest QA API en Visual Studio Code y presiona F5.
+
+### Debugging con Docker Compose y Visual Studio Code
+
+Para depurar la aplicación FastAPI utilizando Docker Compose y Visual Studio Code, sigue estos pasos:
+
+1. **Ejecutar Docker Compose**:
+   Navega a la raíz de tu proyecto y ejecuta el siguiente comando para construir y ejecutar los contenedores:
+   ```sh
+   docker-compose up --build
+2. **Adjuntar el Depurador**:
+- Abre Visual Studio Code.
+- Ve a la pestaña de depuración.
+- Selecciona la configuración QA API (Remote Attach).
+- Presiona F5 para iniciar el depurador.
+
+Esta configuración instalará debugpy, iniciará el servidor de desarrollo y esperará a que el depurador se adjunte en el puerto 5678.
+
+Con esta configuración, puedes depurar tu aplicación FastAPI dentro de un contenedor Docker utilizando Visual Studio Code.
