@@ -10,11 +10,11 @@ client = TestClient(app)
 def load_env():
     load_dotenv()
 
-# # def test_redirect_to_swagger():
-# #     """Tests redirect to Swagger endpoint"""
-# #     response = client.get("/")
-# #     assert response.status_code == 200
-# #     assert response.url.endswith("/docs")
+def test_redirect_to_swagger():
+    """Tests redirect to Swagger endpoint"""
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.url.path.endswith("/docs")
 
 def test_create_question():
     """Tests creating a question"""
@@ -60,6 +60,12 @@ def test_create_answer():
     response = client.post("/answers/", json={"question_id": 1, "content": "This is a sample answer"})
     assert response.status_code == 200
     assert response.json() == {"id": 1, "question_id": 1, "content": "This is a sample answer"}
+
+def test_create_answer_for_nonexistent_question():
+    """Tests creating an answer for a question that does not exist"""
+    response = client.post("/answers/", json={"question_id": 999, "content": "This is a sample answer"})
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Question not found"}
 
 def test_get_answers():
     """Tests fetching all answers for a question"""

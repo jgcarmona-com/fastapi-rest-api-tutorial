@@ -44,11 +44,18 @@ def get_question(question_id: int):
 # Answers
 @router.post("/answers/", response_model=AnswerResponse)
 def create_answer(answer: Answer):
+    # Verify the question exists
+    question_exists = any(question.id == answer.question_id for question in questions)
+    if not question_exists:
+        logger.error(f"Question with id {answer.question_id} not found")
+        raise HTTPException(status_code=404, detail="Question not found")
+
     answer_id = len(answers) + 1
     answer_entity = AnswerEntity(id=answer_id, **answer.model_dump())
     answers.append(answer_entity)
     logger.info(f"Created answer: {answer_entity}")
     return AnswerResponse(id=answer_entity.id, **answer.model_dump())
+
 
 @router.get("/questions/{question_id}/answers/", response_model=List[AnswerResponse])
 def get_answers(question_id: int):

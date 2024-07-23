@@ -1,10 +1,19 @@
+import os
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
+from qa_api import constants
 from qa_api.routes import router
 import uvicorn
 
 
-app = FastAPI()
+app = FastAPI(
+    title=constants.TITLE,
+    description=constants.DESCRIPTION,
+    version=os.environ.get("API_VERSION", "Not found"),
+    contact=constants.CONTACT,
+    license_info=constants.LICENSE_INFO,
+    swagger_ui_parameters=constants.SWAGGER_UI_PARAMETERS,
+)
 
 app.include_router(router)
 
