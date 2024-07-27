@@ -1,16 +1,23 @@
 import logging
 import os
 import debugpy
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import RedirectResponse
+from qna_api.answers.repositories import AnswerRepository
+from qna_api.answers.services import AnswersService
+from qna_api.auth.repositories import UserRepository
+from qna_api.auth.services import AuthService
 from qna_api.core import constants
-from qna_api.auth.routes import router as auth_router
-from qna_api.core.database import init_db
-from qna_api.questions.routes import router as questions_router
-from qna_api.answers.routes import router as answers_router
+from qna_api.auth.routes import AuthController, get_auth_service
+from qna_api.core.database import get_db, init_db
+from qna_api.questions.repositories import QuestionRepository
+from qna_api.questions.routes import QuestionsController
+from qna_api.answers.routes import AnswersController
 from qna_api.core.logging import get_logger
 import uvicorn
+
+from qna_api.questions.services import QuestionsService
 
 
 logger = get_logger(__name__)
@@ -30,10 +37,43 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
-app.include_router(questions_router, prefix="/questions", tags=["questions"])
-app.include_router(answers_router, prefix="/answers", tags=["answers"])
+# Create REPOSITORIES with the DATABASE dependencies
+def get_user_repository(db=Depends(get_db)):
+    return UserRepository(db)
 
+def get_question_repository(db=Depends(get_db)):
+    return QuestionRepository(db)
+
+def get_answers_repository(db=Depends(get_db)):
+    return AnswerRepository(db)
+
+# Create SERVICES with the REPOSITORIES dependencies
+def get_auth_service(user_repo=Depends(get_user_repository)):
+    return AuthService(user_repo)
+
+def get_questions_service(question_repo=Depends(get_question_repository)):
+    return QuestionsService(question_repo)
+
+def get_answers_service(answers_repo=Depends(get_answers_repository)):
+    return AnswersService(answers_repo)
+
+# Create the CONTROLLERS with the SERVICES dependencies
+def get_auth_controller(auth_service=Depends(get_auth_service)):
+    return AuthController(auth_service)
+
+def get_questions_controller(questions_service=Depends(get_questions_service), auth_service=Depends(get_auth_service)):
+    return QuestionsController(questions_service, auth_service)
+
+def get_answers_controller(answers_service=Depends(get_answers_service), auth_service=Depends(get_auth_service)):
+    return AnswersController(answers_service, auth_service)
+
+user_repo = UserRepository(get_db())
+auth_service = get_auth_service(user_repo)
+auth_controller = AuthController(auth_service)
+
+app.include_router(auth_controller.router, prefix="/auth", tags=["auth"])
+app.include_router(get_questions_controller().router, prefix="/questions", tags=["questions"])
+app.include_router(get_answers_controller().router, prefix="/answers", tags=["answers"])
 
 
 @app.get("/", include_in_schema=False, response_class=RedirectResponse)
