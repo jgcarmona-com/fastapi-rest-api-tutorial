@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from qna_api.domain.user import UserEntity
-from qna_api.auth.models import TokenData
+from qna_api.auth.models import TokenData, UserCreate
 from qna_api.core.config import settings
 from qna_api.core.database import get_db
 
@@ -38,6 +38,20 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 def get_user(db: Session, username: str):
     return db.query(UserEntity).filter(UserEntity.username == username).first()
+
+def create_user(db: Session, user: UserCreate):
+    hashed_password = get_password_hash(user.password)
+    db_user = UserEntity(
+        username=user.username,
+        email=user.email,
+        full_name=user.full_name,
+        hashed_password=hashed_password,
+        disabled=False  
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(

@@ -8,6 +8,7 @@ pydantic-settings
 pytest
 pytest-cov
 pytest-dotenv
+pytest-mock
 python-jose
 sqlalchemy
 uvicorn

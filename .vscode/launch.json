@@ -16,7 +16,7 @@
             ]
         },
         {
-            "name": "pytest QA API",
+            "name": "pytest QnA API",
             "type": "debugpy",
             "request": "launch",
             "purpose": [
