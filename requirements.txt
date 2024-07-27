@@ -1,7 +1,13 @@
+bcrypt 
 debugpy
 fastapi
+passlib 
+passlib[bcrypt]
 pydantic
+pydantic-settings
 pytest
 pytest-cov
 pytest-dotenv
+python-jose
+sqlalchemy
 uvicorn

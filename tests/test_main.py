@@ -1,6 +1,6 @@
 """TEST QA API ENDPOINTS"""
 from fastapi.testclient import TestClient
-from qa_api.main import app
+from qna_api.main import app
 import pytest
 from dotenv import load_dotenv
 

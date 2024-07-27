@@ -1,6 +1,6 @@
 # constants.py
-
-TITLE = "QA API"
+APP_NAME = "qna_api"
+TITLE = "QnA API"
 DESCRIPTION = """
 Welcome to the Custom QA REST API documentation!
 

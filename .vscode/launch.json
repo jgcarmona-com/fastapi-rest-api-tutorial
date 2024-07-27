@@ -5,7 +5,7 @@
             "name": "QA API (Local)",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/qa_api/main.py",
+            "program": "${workspaceFolder}/qna_api/main.py",
             "console": "integratedTerminal",
             "env": {
                 "PYTHONUNBUFFERED": "1",
