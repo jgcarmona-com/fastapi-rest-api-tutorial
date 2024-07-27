@@ -1,8 +1,8 @@
 # constants.py
 
-TITLE = "Custom FastAPI REST API"
+TITLE = "QA API"
 DESCRIPTION = """
-Welcome to the Custom FastAPI REST API documentation!
+Welcome to the Custom QA REST API documentation!
 
 This API provides endpoints for managing questions, answers, and comments in a Q&A system. You can use this API to create, retrieve, update, and delete records. The main features include:
 

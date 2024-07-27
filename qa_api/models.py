@@ -5,7 +5,7 @@ from typing import Optional
 class Question(BaseModel):
     title: str
     description: str
-
+    
 class QuestionResponse(Question):
     id: Optional[int]
 
@@ -28,6 +28,7 @@ class QuestionEntity(BaseModel):
     id: int
     title: str
     description: str
+    optional: Optional[str] = None
 
 class AnswerEntity(BaseModel):
     id: int
