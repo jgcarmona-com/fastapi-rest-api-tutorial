@@ -10,5 +10,4 @@ class AnswerResponse(BaseModel):
     user_id: int
 
     class Config:
-        orm_mode = True
-        from_attributes = True # This is required to convert SQLAlchemy objects to Pydantic models
+        from_attributes = True
