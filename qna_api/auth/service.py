@@ -3,7 +3,9 @@ from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from pytest import Session
 from qna_api.auth.models import TokenData
+from qna_api.core import database
 from qna_api.core.config import settings
 from qna_api.domain.user import UserEntity
 from qna_api.user.repository import UserRepository
@@ -33,7 +35,7 @@ class AuthService:
         return encoded_jwt
 
     @staticmethod
-    def get_current_user(token: str = Depends(oauth2_scheme)):
+    def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -44,13 +46,11 @@ class AuthService:
             username: str = payload.get("sub")
             if username is None:
                 raise credentials_exception
-            token_data = TokenData(
-                username=username, 
-                roles=payload.get("roles")
-                )
+            token_data = TokenData(username=username, roles=payload.get("roles"))
         except JWTError:
             raise credentials_exception
-        user_repo = UserRepository(settings.get_db())
+
+        user_repo = UserRepository(db)
         user = user_repo.get_by_username(token_data.username)
         if user is None:
             raise credentials_exception

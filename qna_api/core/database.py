@@ -33,7 +33,6 @@ def init_db():
     # Create an initial admin user if none exists
     db = SessionLocal()
     user_repo = UserRepository(db)
-    auth_service = AuthService(user_repo)
 
     if not user_repo.get_by_username(settings.initial_admin_username):
         admin_user = UserEntity(
@@ -41,7 +40,7 @@ def init_db():
             email=settings.initial_admin_email,
             full_name="API Admin",
             hashed_password=pwd_context.hash(settings.initial_admin_password),
-            disabled=False,
+            disabled=False
         )
         admin_user.set_roles([Role.ADMIN, Role.USER])
         user_repo.create(admin_user)

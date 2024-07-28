@@ -9,4 +9,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str | None = None
-    roles: list[str] | None = None
+    roles: str | None = None

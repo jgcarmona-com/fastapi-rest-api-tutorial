@@ -34,9 +34,6 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Initialize the database and create tables
-init_db()
-
 # Create repository and service instances
 db = next(get_db())
 
@@ -51,7 +48,7 @@ question_controller = QuestionController(question_service)
 
 
 
-app.include_router(auth_controller.router, prefix="", tags=["auth"])
+app.include_router(auth_controller.router, prefix="/auth", tags=["auth"])
 app.include_router(user_controller.router, prefix="/users", tags=["users"])
 app.include_router(question_controller.router, prefix="/questions", tags=["questions"])
 
