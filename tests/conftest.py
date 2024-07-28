@@ -1,33 +1,35 @@
-# import pytest
-# from fastapi.testclient import TestClient
-# from qna_api.main import app
-# from qna_api.auth.services import create_access_token, get_password_hash
-# from qna_api.core.database import SessionLocal
-# from qna_api.domain.user import UserEntity
-# from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
+import pytest
+from qna_api.core.config import settings
 
-# @pytest.fixture(scope="module")
-# def client():
-#     with TestClient(app) as c:
-#         yield c
+@pytest.fixture(scope="session", autouse=True)
+def load_settings():
+    # Set up the settings for the tests
+    settings.secret_key = "your_secret_key"
+    settings.algorithm = "HS256"
+    settings.access_token_expire_minutes = 30
+    settings.database_url = "sqlite:///./test_qna.db"
+    settings.initial_admin_username = "admin"
+    settings.initial_admin_email = "admin@example.com"
+    settings.initial_admin_password = "P@ssw0rd!"
 
-# @pytest.fixture
-# def mock_db_session():
-#     with patch("qna_api.core.database.SessionLocal", autospec=True) as mock_session:
-#         session = mock_session.return_value
-#         session.query.return_value.filter.return_value.first.return_value = None
-#         yield session
+    yield
 
-# @pytest.fixture
-# def auth_client(client: TestClient, mock_db_session):
-#     # Crear un usuario simulado sin el campo 'password'
-#     user_data = {"id": 1, "username": "testuser", "email": "testuser@example.com", "full_name": "Test User"}
-#     mock_user = UserEntity(**user_data, hashed_password=get_password_hash("password123"))
-#     mock_db_session.query.return_value.filter.return_value.first.return_value = mock_user
-    
-#     # Crear un token de acceso simulado
-#     token = create_access_token(data={"sub": mock_user.username})
-    
-#     # Añadir el token al cliente de prueba
-#     client.headers.update({"Authorization": f"Bearer {token}"})
-#     return client
+@pytest.fixture(scope='module')
+def mock_db_session():
+    # Create a mock database session
+    session = MagicMock()
+    yield session
+
+@pytest.fixture
+def client(mock_db_session):
+    from fastapi.testclient import TestClient
+    from qna_api.main import app 
+    from qna_api.core.database import get_db
+    def get_db_override():
+        return mock_db_session
+
+    app.dependency_overrides[get_db] = get_db_override
+    client = TestClient(app)
+    yield client
+    app.dependency_overrides.clear()

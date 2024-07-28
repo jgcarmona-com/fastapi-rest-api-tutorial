@@ -1,9 +1,20 @@
 from sqlalchemy.orm import Session
 from qna_api.domain.user import UserEntity
+from qna_api.core.database import get_db
 
 class UserRepository:
+    _instance = None
+
     def __init__(self, db: Session):
         self.db = db
+
+    @classmethod
+    def instance(cls, db: Session = None):
+        if cls._instance is None:
+            if db is None:
+                db = next(get_db())
+            cls._instance = cls(db)
+        return cls._instance
 
     def create(self, user: UserEntity) -> UserEntity:
         self.db.add(user)

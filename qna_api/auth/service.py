@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pytest import Session
 from qna_api.auth.models import TokenData
-from qna_api.core import database
+from qna_api.core.database import get_db
 from qna_api.core.config import settings
 from qna_api.domain.user import UserEntity
 from qna_api.user.repository import UserRepository
@@ -35,7 +35,7 @@ class AuthService:
         return encoded_jwt
 
     @staticmethod
-    def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
+    def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -50,7 +50,7 @@ class AuthService:
         except JWTError:
             raise credentials_exception
 
-        user_repo = UserRepository(db)
+        user_repo = UserRepository.instance(db)
         user = user_repo.get_by_username(token_data.username)
         if user is None:
             raise credentials_exception
