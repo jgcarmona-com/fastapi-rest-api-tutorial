@@ -2,6 +2,12 @@
 
 Este repositorio contiene un ejemplo de cómo construir una API REST utilizando FastAPI. El tutorial cubre desde la configuración básica del proyecto hasta la implementación de pruebas unitarias y la configuración de Docker para el despliegue y la depuración.
 
+## Tutoriales en Video
+
+### Video 1: Introducción y Configuración Inicial
+- [Ver en YouTube](https://youtu.be/9oUlpbcC8BQ)
+- [Código correspondiente a este vídeo](https://github.com/jgcarmona-com/fastapi-rest-api-tutorial/tree/fa96b75)
+
 ## Estructura del Proyecto
 ```plaintext
 
