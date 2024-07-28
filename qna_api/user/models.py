@@ -1,8 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from sqlalchemy import Column, Integer, String
-from qna_api.core.database import Base
 
-# Modelos Pydantic
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -17,6 +14,13 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+
+class UserUpdate(BaseModel):
+    username: str = None
+    email: str = None
+    full_name: str = None
+    disabled: bool = None
+    password: str = None
 
 class User(UserBase):
     id: int

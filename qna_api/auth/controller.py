@@ -1,3 +1,4 @@
+# qna_api/auth/controller.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from qna_api.auth.models import Token
@@ -28,6 +29,6 @@ class AuthController:
             )
         access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
         access_token = self.auth_service.create_access_token(
-            data={"sub": user.username}, expires_delta=access_token_expires
-        )
+                                    data={"sub": user.username,"roles": user.roles},
+                                    expires_delta=access_token_expires)
         return {"access_token": access_token, "token_type": "bearer"}

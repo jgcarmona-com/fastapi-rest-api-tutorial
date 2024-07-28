@@ -42,7 +42,7 @@ def init_db():
             full_name="API Admin",
             hashed_password=pwd_context.hash(settings.initial_admin_password),
             disabled=False,
-            role=Role.ADMIN
         )
+        admin_user.set_roles([Role.ADMIN, Role.USER])
         user_repo.create(admin_user)
     db.close()

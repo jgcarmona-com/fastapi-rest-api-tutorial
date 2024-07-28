@@ -9,18 +9,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str | None = None
-
-class UserBase(BaseModel):
-    username: str
-    email: EmailStr | None = None
-    full_name: str | None = None
-
-class UserCreate(UserBase):
-    password: str
-
-class User(UserBase):
-    id: int
-    disabled: bool | None = None
-
-    class Config:
-        from_attributes = True
+    roles: list[str] | None = None

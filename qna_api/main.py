@@ -2,7 +2,7 @@
 from fastapi import Depends, FastAPI
 from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import RedirectResponse
-from qna_api.auth.routes import AuthController
+from qna_api.auth.controller import AuthController
 from qna_api.auth.service import AuthService
 from qna_api.core import constants
 from qna_api.core.database import get_db, init_db
@@ -47,7 +47,7 @@ question_service = QuestionService(db)
 # Create controller instances
 auth_controller = AuthController(auth_service)
 user_controller = UserController(auth_service)
-question_controller = QuestionController(question_service, auth_service)
+question_controller = QuestionController(question_service)
 
 
 

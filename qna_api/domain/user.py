@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy import Column, Enum, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 from qna_api.core.database import Base
@@ -12,7 +13,13 @@ class UserEntity(Base):
     full_name = Column(String)
     hashed_password = Column(String)
     disabled = Column(Boolean, default=False)
-    role = Column(Enum(Role), default=Role.USER)
+    roles = Column(String)  # Roles stored as comma-separated string
 
     questions = relationship("QuestionEntity", back_populates="user")
     answers = relationship("AnswerEntity", back_populates="user")
+
+    def get_roles(self) -> List[Role]:
+        return [Role(role) for role in self.roles.split(",")]
+
+    def set_roles(self, roles: List[Role]) -> None:
+        self.roles = ",".join([role.value for role in roles])

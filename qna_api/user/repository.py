@@ -10,6 +10,9 @@ class UserRepository:
         self.db.commit()
         self.db.refresh(user)
         return user
-
+    
+    def get(self, question_id: int) -> UserEntity:
+        return self.db.query(UserEntity).filter(UserEntity.id == question_id).first()
+    
     def get_by_username(self, username: str) -> UserEntity:
         return self.db.query(UserEntity).filter(UserEntity.username == username).first()

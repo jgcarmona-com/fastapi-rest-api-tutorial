@@ -1,19 +1,22 @@
 from datetime import datetime, timedelta, timezone
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from qna_api.auth.models import TokenData
 from qna_api.core.config import settings
+from qna_api.domain.user import UserEntity
 from qna_api.user.repository import UserRepository
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class AuthService:
+    oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+    
     def __init__(self, user_repo: UserRepository):
         self.user_repo = user_repo
 
-    def authenticate_user(self, username: str, password: str):
+    def authenticate_user(self, username: str, password: str) -> UserEntity | None:
         user = self.user_repo.get_by_username(username)
         if not user or not self._verify_password(password, user.hashed_password):
             return None
@@ -29,7 +32,8 @@ class AuthService:
         encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
         return encoded_jwt
 
-    def get_current_user(self, token: str):
+    @staticmethod
+    def get_current_user(token: str = Depends(oauth2_scheme)):
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -40,22 +44,21 @@ class AuthService:
             username: str = payload.get("sub")
             if username is None:
                 raise credentials_exception
-            token_data = TokenData(username=username)
+            token_data = TokenData(
+                username=username, 
+                roles=payload.get("roles")
+                )
         except JWTError:
             raise credentials_exception
-        user = self.user_repo.get_by_username(username=token_data.username)
+        user_repo = UserRepository(settings.get_db())
+        user = user_repo.get_by_username(token_data.username)
         if user is None:
             raise credentials_exception
         return user
     
     @staticmethod
-    def _verify_password(plain_password: str, hashed_password: str) -> bool:
-        return pwd_context.verify(plain_password, hashed_password)
-
-    @staticmethod
-    def _get_password_hash(password: str) -> str:
+    def get_password_hash(password: str) -> str:
         return pwd_context.hash(password)
-
-    @staticmethod
-    def oauth2_scheme():
-        return OAuth2PasswordBearer(tokenUrl="auth/token")
+    
+    def _verify_password(self, plain_password: str, hashed_password: str) -> bool:
+        return pwd_context.verify(plain_password, hashed_password)
