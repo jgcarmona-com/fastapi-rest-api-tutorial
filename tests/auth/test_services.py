@@ -1,4 +1,4 @@
-from qna_api.auth.services import get_password_hash, verify_password, authenticate_user, create_access_token
+from qna_api.auth.service import get_password_hash, verify_password, authenticate_user, create_access_token
 from qna_api.domain.user import UserEntity
 from datetime import timedelta
 

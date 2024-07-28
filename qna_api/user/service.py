@@ -1,36 +1,19 @@
 from datetime import datetime, timedelta, timezone
-from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
-from qna_api.auth.models import UserCreate, TokenData
-from qna_api.auth.repositories import UserRepository
-from qna_api.domain.user import UserEntity
 from qna_api.core.config import settings
+from qna_api.auth.models import TokenData
+from fastapi import HTTPException, status
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class AuthService:
-    def __init__(self, user_repo: UserRepository):
+    def __init__(self, user_repo):
         self.user_repo = user_repo
 
-    def create_user(self, user: UserCreate) -> UserEntity:
-        hashed_password = self._get_password_hash(user.password)
-        db_user = UserEntity(
-            username=user.username,
-            email=user.email,
-            full_name=user.full_name,
-            hashed_password=hashed_password,
-            disabled=False
-        )
-        return self.user_repo.create(db_user)
-
-    def authenticate_user(self, username: str, password: str) -> UserEntity:
+    def authenticate_user(self, username: str, password: str):
         user = self.user_repo.get_by_username(username)
-        if not user:
-            return None
-        if not self._verify_password(password, user.hashed_password):
+        if not user or not self._verify_password(password, user.hashed_password):
             return None
         return user
 
@@ -63,14 +46,5 @@ class AuthService:
             raise credentials_exception
         return user
 
-    @staticmethod
-    def _verify_password(plain_password: str, hashed_password: str) -> bool:
+    def _verify_password(self, plain_password: str, hashed_password: str) -> bool:
         return pwd_context.verify(plain_password, hashed_password)
-
-    @staticmethod
-    def _get_password_hash(password: str) -> str:
-        return pwd_context.hash(password)
-
-    @staticmethod
-    def oauth2_scheme():
-        return OAuth2PasswordBearer(tokenUrl="auth/token")

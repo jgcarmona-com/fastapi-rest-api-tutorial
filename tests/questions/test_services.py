@@ -1,5 +1,5 @@
 from pytest_mock import mocker
-from qna_api.questions.services import create_question, get_question, get_all_questions
+from qna_api.questions.service import create_question, get_question, get_all_questions
 from qna_api.questions.models import QuestionCreate
 from qna_api.domain.user import UserEntity
 

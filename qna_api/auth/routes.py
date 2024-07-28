@@ -1,11 +1,12 @@
-from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from qna_api.auth.models import UserCreate, Token
-from qna_api.auth.repositories import UserRepository
-from qna_api.auth.services import AuthService
+from qna_api.auth.models import Token
+from qna_api.auth.service import AuthService
+from qna_api.core.logging import get_logger
+from datetime import timedelta
 from qna_api.core.config import settings
-from typing import List
+
+logger = get_logger(__name__)
 
 class AuthController:
     def __init__(self, auth_service: AuthService):
@@ -15,10 +16,9 @@ class AuthController:
 
     def _add_routes(self):
         self.router.post("/token", response_model=Token)(self.authenticate)
-        self.router.post("/users/", response_model=UserCreate)(self.create_user)
-        self.router.get("/users/me/", response_model=UserCreate)(self.me)
 
-    def authenticate(self, form_data: OAuth2PasswordRequestForm = Depends()):
+    async def authenticate(self, form_data: OAuth2PasswordRequestForm = Depends()):
+        logger.info(f"Logging in user: {form_data.username}")
         user = self.auth_service.authenticate_user(form_data.username, form_data.password)
         if not user:
             raise HTTPException(
@@ -31,13 +31,3 @@ class AuthController:
             data={"sub": user.username}, expires_delta=access_token_expires
         )
         return {"access_token": access_token, "token_type": "bearer"}
-
-    def create_user(self, user: UserCreate):
-        return self.auth_service.create_user(user)
-
-    def me(self, token: str = Depends(AuthService.oauth2_scheme)):
-        return self.auth_service.get_current_user(token)
-
-# Dependency Injection function
-def get_auth_service(user_repo: UserRepository = Depends()) -> AuthService:
-    return AuthService(user_repo)
