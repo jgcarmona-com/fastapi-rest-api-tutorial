@@ -1,6 +1,8 @@
+from typing import List
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+from qna_api.answers.models import AnswerResponse
 from qna_api.core.database import Base
 
 # Modelos Pydantic
@@ -22,6 +24,16 @@ class QuestionCreate(QuestionBase):
 class QuestionResponse(QuestionBase):
     id: int
     user_id: int
+
+    class Config:
+        from_attributes = True
+
+class FullQuestionResponse(BaseModel):
+    id: int
+    title: str
+    description: str
+    user_id: int
+    answers: List[AnswerResponse]
 
     class Config:
         from_attributes = True

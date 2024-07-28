@@ -2,6 +2,8 @@
 from fastapi import Depends, FastAPI
 from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import RedirectResponse
+from qna_api.answers.controller import AnswerController
+from qna_api.answers.service import AnswerService
 from qna_api.auth.controller import AuthController
 from qna_api.auth.service import AuthService
 from qna_api.core import constants
@@ -34,23 +36,30 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Create repository and service instances
+# GET DB
 db = next(get_db())
 
+# Create repository and service instances
 user_repository = UserRepository(db)
-auth_service = AuthService(user_repository)
+
+# TODO: create and use instances of QuestionRepository and AnswerRepository
 question_service = QuestionService(db)
+answer_service = AnswerService(db)
+
+auth_service = AuthService(user_repository)
 
 # Create controller instances
 auth_controller = AuthController(auth_service)
 user_controller = UserController(auth_service)
-question_controller = QuestionController(question_service)
+question_controller = QuestionController(question_service, answer_service)
+answer_controller = AnswerController(answer_service)
 
 
 
 app.include_router(auth_controller.router, prefix="/auth", tags=["auth"])
-app.include_router(user_controller.router, prefix="/users", tags=["users"])
-app.include_router(question_controller.router, prefix="/questions", tags=["questions"])
+app.include_router(user_controller.router, prefix="/user", tags=["user"])
+app.include_router(question_controller.router, prefix="/question", tags=["question"])
+app.include_router(answer_controller.router, prefix="/answer", tags=["answer"])
 
 
 @app.get("/", include_in_schema=False, response_class=RedirectResponse)
