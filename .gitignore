@@ -18,6 +18,9 @@
 # Ignore Local DBs
 *.db
 
+# Ignore htmlcov
+htmlcov/
+
 # Mono auto generated files
 mono_crash.*
 
