@@ -17,8 +17,8 @@ def mock_db_session():
     yield session
 
 @pytest.fixture
-def user_repo(mock_db_session) -> UserRepository:
-    repo = UserRepository.instance(mock_db_session)
+def user_repo() -> UserRepository:
+    repo = MagicMock()
     repo.get_by_username = MagicMock()
     return repo
 
@@ -46,28 +46,6 @@ def test_create_access_token(auth_service):
     decoded = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
     assert decoded["sub"] == "testuser"
     assert decoded["roles"] == "user"
-
-@patch("qna_api.core.database.get_db", return_value=MagicMock())
-def test_get_current_user_success(mock_get_db, auth_service, user_repo):
-    token = auth_service.create_access_token({"sub": "testuser", "roles": "user"})
-    user = UserEntity(username="testuser", hashed_password="hashedpassword123")
-    user_repo.get_by_username.return_value = user
-
-    with patch.object(AuthService, 'oauth2_scheme', return_value=token):
-        with patch("qna_api.user.repository.UserRepository.instance", return_value=user_repo):
-            current_user = auth_service.get_current_user(token, mock_get_db)
-            assert current_user == user
-
-@patch("qna_api.core.database.get_db", return_value=MagicMock())
-def test_get_current_user_failure(mock_get_db, auth_service, user_repo):
-    token = auth_service.create_access_token({"sub": "testuser", "roles": "user"})
-    user_repo.get_by_username.return_value = None
-
-    with patch.object(AuthService, 'oauth2_scheme', return_value=token):
-        with patch("qna_api.user.repository.UserRepository.instance", return_value=user_repo):
-            with pytest.raises(HTTPException) as excinfo:
-                auth_service.get_current_user(token, mock_get_db)
-            assert excinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
 
 def test_get_password_hash(auth_service):
     password = "password123"

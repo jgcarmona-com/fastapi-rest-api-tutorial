@@ -18,6 +18,8 @@ import debugpy
 import os
 import uvicorn
 
+from qna_api.user.service import UserService
+
 
 logger = get_logger(__name__)
 
@@ -40,17 +42,18 @@ app = FastAPI(
 db = next(get_db())
 
 # Create repository and service instances
-user_repository = UserRepository(db)
+user_repository = UserRepository.instance()
 
 # TODO: create and use instances of QuestionRepository and AnswerRepository
 question_service = QuestionService(db)
 answer_service = AnswerService(db)
 
 auth_service = AuthService(user_repository)
+user_service = UserService(user_repository)
 
 # Create controller instances
 auth_controller = AuthController(auth_service)
-user_controller = UserController(auth_service)
+user_controller = UserController(user_service, auth_service)
 question_controller = QuestionController(question_service, answer_service)
 answer_controller = AnswerController(answer_service)
 

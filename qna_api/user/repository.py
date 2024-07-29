@@ -9,10 +9,9 @@ class UserRepository:
         self.db = db
 
     @classmethod
-    def instance(cls, db: Session = None):
+    def instance(cls):
         if cls._instance is None:
-            if db is None:
-                db = next(get_db())
+            db = next(get_db())
             cls._instance = cls(db)
         return cls._instance
 

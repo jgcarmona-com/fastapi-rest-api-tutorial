@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from qna_api.auth.service import AuthService
+from qna_api.auth.service import AuthService, get_authenticated_user
 from qna_api.user.models import User, UserCreate, UserUpdate
 from qna_api.user.service import UserService
 
 class UserController:
-    def __init__(self, user_service: UserService):
+    def __init__(self, user_service: UserService, auth_service: AuthService):
         self.user_service = user_service
+        self.auth_service = auth_service
         self.router = APIRouter()
         self._add_routes()
 
@@ -18,10 +19,10 @@ class UserController:
     async def create_user(self, user: UserCreate):
         return self.user_service.create_user(user)
     
-    async def me(self, current_user: User = Depends(AuthService.get_current_user)):
+    async def me(self, current_user: User = Depends(get_authenticated_user)):
         return current_user
     
-    async def update_user(self, user_id: int, user_update: UserUpdate, current_user: User = Depends(AuthService.get_current_user)):
+    async def update_user(self, user_id: int, user_update: UserUpdate, current_user: User = Depends(get_authenticated_user)):
         updated_user = self.user_service.update_user(user_id, user_update, current_user)
         if not updated_user:
             raise HTTPException(
