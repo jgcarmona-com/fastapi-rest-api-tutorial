@@ -5,7 +5,6 @@ from sqlalchemy.orm import relationship
 from qna_api.answers.models import AnswerResponse
 from qna_api.core.database import Base
 
-# Modelos Pydantic
 class QuestionBase(BaseModel):
     title: str = Field(..., example="How to implement authentication in FastAPI?")
     description: str = Field(..., example="I need help with implementing authentication using JWT in FastAPI.")

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from qna_api.auth.service import AuthService
+from qna_api.auth.auth_service import AuthService
 from qna_api.core.config import settings
 from qna_api.auth.models import TokenData
 from fastapi import HTTPException, status

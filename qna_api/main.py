@@ -5,7 +5,7 @@ from fastapi.responses import RedirectResponse
 from qna_api.answers.controller import AnswerController
 from qna_api.answers.service import AnswerService
 from qna_api.auth.controller import AuthController
-from qna_api.auth.service import AuthService
+from qna_api.auth.auth_service import AuthService
 from qna_api.core import constants
 from qna_api.core.database import get_db, init_db
 from qna_api.core.logging import get_logger
@@ -28,41 +28,49 @@ async def lifespan(app: FastAPI):
     init_db()  # Inicializa la base de datos
     yield
 
-app = FastAPI(
-    title=constants.TITLE,
-    description=constants.DESCRIPTION,
-    version=os.environ.get("API_VERSION", "Not found"),
-    contact=constants.CONTACT,
-    license_info=constants.LICENSE_INFO,
-    swagger_ui_parameters=constants.SWAGGER_UI_PARAMETERS,
-    lifespan=lifespan
-)
-
-# GET DB
-db = next(get_db())
-
-# Create repository and service instances
-user_repository = UserRepository.instance()
-
-# TODO: create and use instances of QuestionRepository and AnswerRepository
-question_service = QuestionService(db)
-answer_service = AnswerService(db)
-
-auth_service = AuthService(user_repository)
-user_service = UserService(user_repository)
-
-# Create controller instances
-auth_controller = AuthController(auth_service)
-user_controller = UserController(user_service, auth_service)
-question_controller = QuestionController(question_service, answer_service)
-answer_controller = AnswerController(answer_service)
 
 
+def create_app(
+        question_service=None,
+        answer_service=None,
+        auth_service=None,
+        user_service=None):
+    app = FastAPI(
+        title="API",
+        description="API Description",
+        version="0.1",
+        contact={},
+        license_info={},
+        swagger_ui_parameters={},
+        lifespan=lifespan
+    )
 
-app.include_router(auth_controller.router, prefix="/auth", tags=["auth"])
-app.include_router(user_controller.router, prefix="/user", tags=["user"])
-app.include_router(question_controller.router, prefix="/question", tags=["question"])
-app.include_router(answer_controller.router, prefix="/answer", tags=["answer"])
+    db = next(get_db())
+
+    user_repository = UserRepository.instance()
+
+    if not question_service:
+        question_service = QuestionService(db)
+    if not answer_service:
+        answer_service = AnswerService(db)
+    if not auth_service:
+        auth_service = AuthService(user_repository)
+    if not user_service:
+        user_service = UserService(user_repository)
+
+    auth_controller = AuthController(auth_service)
+    user_controller = UserController(user_service)
+    question_controller = QuestionController(question_service)
+    answer_controller = AnswerController(answer_service)
+
+    app.include_router(auth_controller.router, prefix="/auth", tags=["auth"])
+    app.include_router(user_controller.router, prefix="/user", tags=["user"])
+    app.include_router(question_controller.router, prefix="/question", tags=["question"])
+    app.include_router(answer_controller.router, prefix="/answer", tags=["answer"])
+
+    return app
+
+app = create_app()
 
 
 @app.get("/", include_in_schema=False, response_class=RedirectResponse)

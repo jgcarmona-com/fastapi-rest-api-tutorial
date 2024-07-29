@@ -3,9 +3,7 @@ import pytest
 from unittest.mock import MagicMock, patch
 from datetime import timedelta
 from jose import jwt
-from fastapi import HTTPException, status
-from qna_api.auth.service import AuthService
-from qna_api.auth.models import TokenData
+from qna_api.auth.auth_service import AuthService
 from qna_api.domain.user import UserEntity
 from qna_api.core.config import settings
 from qna_api.user.repository import UserRepository

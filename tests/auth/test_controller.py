@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from datetime import timedelta  # Add this import
 from qna_api.main import app
-from qna_api.auth.service import AuthService
+from qna_api.auth.auth_service import AuthService
 from qna_api.auth.controller import AuthController
 from qna_api.core.config import settings  # Make sure to import settings
 
