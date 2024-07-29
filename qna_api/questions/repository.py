@@ -8,7 +8,7 @@ class QuestionRepository:
         self.db = db
 
     def create(self, question: QuestionCreate, user_id: int) -> QuestionResponse:
-        db_question = QuestionEntity(**question.dict(), user_id=user_id)
+        db_question = QuestionEntity(**question.model_dump(), user_id=user_id)
         self.db.add(db_question)
         self.db.commit()
         self.db.refresh(db_question)
