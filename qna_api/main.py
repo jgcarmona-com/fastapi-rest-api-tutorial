@@ -2,6 +2,7 @@
 from fastapi import Depends, FastAPI
 from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import RedirectResponse
+from mediatr import Mediator
 from qna_api.answers.controller import AnswerController
 from qna_api.answers.service import AnswerService
 from qna_api.auth.controller import AuthController
@@ -25,16 +26,16 @@ logger = get_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()  # Inicializa la base de datos
+    init_db()
     yield
 
 
 
 def create_app(
+        mediator=None,
         question_service=None,
         answer_service=None,
-        auth_service=None,
-        user_service=None):
+        auth_service=None):
     app = FastAPI(
         title="API",
         description="API Description",
@@ -49,17 +50,17 @@ def create_app(
 
     user_repository = UserRepository.instance()
 
+    if not mediator:
+        mediator = Mediator()
     if not question_service:
         question_service = QuestionService(db)
     if not answer_service:
         answer_service = AnswerService(db)
     if not auth_service:
         auth_service = AuthService(user_repository)
-    if not user_service:
-        user_service = UserService(user_repository)
 
     auth_controller = AuthController(auth_service)
-    user_controller = UserController(user_service)
+    user_controller = UserController(mediator)
     question_controller = QuestionController(question_service)
     answer_controller = AnswerController(answer_service)
 

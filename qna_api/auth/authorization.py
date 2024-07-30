@@ -14,15 +14,20 @@ def get_authenticated_user(token: str = Depends(oauth2_scheme), user_repo: UserR
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
+    )    
+    token_exception = HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Invalid token",
+        headers={"WWW-Authenticate": "Bearer"},
     )
     try:
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         username: str = payload.get("sub")
         if not username:
-            raise credentials_exception
+            raise token_exception
         token_data = TokenData(username=username, roles=payload.get("roles"))
     except JWTError:
-        raise credentials_exception
+        raise token_exception
 
     user = user_repo.get_by_username(token_data.username)
     if user is None:

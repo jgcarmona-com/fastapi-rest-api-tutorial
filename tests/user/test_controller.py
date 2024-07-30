@@ -1,17 +1,17 @@
+from mediatr import Mediator
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import MagicMock
 from qna_api.main import create_app
-from qna_api.user.service import UserService
 from qna_api.auth.authorization import get_authenticated_user
 from qna_api.user.models import User
 
-from .models import mock_user, mock_user_create, mock_user_update, mock_updated_user
+from .models import mock_new_user, mock_updated_user, mock_updated_user
 
 # Configure Test Client
 @pytest.fixture
-def client(user_service, authenticated_user):
-    app = create_app(user_service=user_service)
+def client(mediator, authenticated_user):
+    app = create_app(mediator=mediator)
 
     def _get_authenticated_user():
         return authenticated_user    
@@ -21,18 +21,18 @@ def client(user_service, authenticated_user):
     with TestClient(app) as client:
         yield client
 
-# Mock services
+# Mock mediator
 @pytest.fixture
-def user_service():
-    return MagicMock(spec=UserService)
+def mediator():
+    return MagicMock(spec=Mediator)
 
 # Mock authenticated user
 @pytest.fixture
 def authenticated_user():
     return User(id=1, username="testuser", full_name="Test User", email="testuser@example.com", roles=["user"])
 
-def test_create_user(client, user_service):
-    user_service.create_user.return_value = mock_user_create
+def test_create_user(client, mediator):
+    mediator.send_async.return_value = mock_new_user
 
     response = client.post("/user", json={"username": "newuser", "email": "newuser@example.com", "full_name": "New User", "password": "password123"})
     
@@ -41,9 +41,9 @@ def test_create_user(client, user_service):
     assert data["username"] == "newuser"
     assert data["email"] == "newuser@example.com"
     assert data["full_name"] == "New User"
-    user_service.create_user.assert_called_once()
+    mediator.send_async.assert_called_once()
 
-def test_me(client, user_service):
+def test_me(client):
     response = client.get("user/me")
     
     assert response.status_code == 200
@@ -52,8 +52,8 @@ def test_me(client, user_service):
     assert data["email"] == "testuser@example.com"
     assert data["full_name"] == "Test User"
 
-def test_update_user(client, user_service):
-    user_service.update_user.return_value = mock_updated_user
+def test_update_user(client, mediator):
+    mediator.send_async.return_value = mock_updated_user
 
     response = client.put("user/1", json={"username": "updateduser", "email": "updateduser@example.com", "full_name": "Updated User"})
     
@@ -62,4 +62,4 @@ def test_update_user(client, user_service):
     assert data["username"] == mock_updated_user.username
     assert data["email"] == mock_updated_user.email
     assert data["full_name"] == mock_updated_user.full_name
-    user_service.update_user.assert_called_once()
+    mediator.send_async.assert_called_once()
