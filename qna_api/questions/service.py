@@ -4,7 +4,7 @@ from qna_api.domain.answer import AnswerEntity
 from qna_api.questions.models import FullQuestionResponse, QuestionCreate, QuestionResponse
 from qna_api.domain.question import QuestionEntity
 
-class QuestionService:
+class QuestionService():
     def __init__(self, db: Session):
         self.db = db
 

@@ -19,9 +19,6 @@ import debugpy
 import os
 import uvicorn
 
-from qna_api.user.service import UserService
-
-
 logger = get_logger(__name__)
 
 @asynccontextmanager
@@ -33,7 +30,6 @@ async def lifespan(app: FastAPI):
 
 def create_app(
         mediator=None,
-        question_service=None,
         answer_service=None,
         auth_service=None):
     app = FastAPI(
@@ -52,8 +48,6 @@ def create_app(
 
     if not mediator:
         mediator = Mediator()
-    if not question_service:
-        question_service = QuestionService(db)
     if not answer_service:
         answer_service = AnswerService(db)
     if not auth_service:
@@ -61,7 +55,7 @@ def create_app(
 
     auth_controller = AuthController(auth_service)
     user_controller = UserController(mediator)
-    question_controller = QuestionController(question_service)
+    question_controller = QuestionController(mediator)
     answer_controller = AnswerController(answer_service)
 
     app.include_router(auth_controller.router, prefix="/auth", tags=["auth"])
