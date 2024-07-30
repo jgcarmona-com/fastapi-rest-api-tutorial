@@ -53,7 +53,7 @@ def create_app(
     app.include_router(user_controller.router, prefix="/user", tags=["user"])
     app.include_router(question_controller.router, prefix="/question", tags=["question"])
     app.include_router(answer_controller.router, prefix="/question", tags=["Answer"]) # Depends on question
-    app.include_router(votes_controller.router, prefix="/vote", tags=["Vote"])
+    app.include_router(votes_controller.router, tags=["Vote"])
 
     return app
 
