@@ -28,3 +28,12 @@ class QuestionRepository(BaseRepository[QuestionEntity]):
             .first()
         )
         return db_question
+
+    def add_answer(self, answer: AnswerEntity) -> AnswerEntity:
+        self.db.add(answer)
+        self.db.commit()
+        self.db.refresh(answer)
+        return answer
+    
+    def get_answers(self, question_id: int) -> List[AnswerEntity]:
+        return self.db.query(AnswerEntity).filter(AnswerEntity.question_id == question_id).all()

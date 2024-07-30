@@ -1,18 +1,15 @@
-
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import RedirectResponse
 from mediatr import Mediator
 from qna_api.answers.controller import AnswerController
 from qna_api.answers.service import AnswerService
-from qna_api.auth.controller import AuthController
 from qna_api.auth.auth_service import AuthService
+from qna_api.auth.controller import AuthController
 from qna_api.core import constants
 from qna_api.core.database import get_db, init_db
 from qna_api.core.logging import get_logger
 from qna_api.questions.controller import QuestionController
-from qna_api.questions.repository import QuestionRepository
-from qna_api.questions.service import QuestionService
 from qna_api.user.controller import UserController
 from qna_api.user.repository import UserRepository
 import debugpy
