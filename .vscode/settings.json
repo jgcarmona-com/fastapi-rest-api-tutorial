@@ -6,7 +6,11 @@
         "--cov=.",
         "--cov-report=xml:coverage.xml",
         "--cov-config=tox.ini"
-    ],
+    ], 
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true
+    },
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#65c89b",
         "activityBar.background": "#65c89b",
