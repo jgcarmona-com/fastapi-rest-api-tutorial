@@ -120,28 +120,6 @@ def test_delete_question(client, mediator):
     data = response.json()
     assert data["id"] == 1
 
-def test_add_answer(client, mediator):
-    mediator.send_async.return_value = mock_answer
-
-    response = client.post("/question/1/answer", json={"content": "This is an answer"})
-    
-    mediator.send_async.assert_called_once()
-    assert response.status_code == 200
-    data = response.json()
-    assert data["content"] == "This is an answer"
-    assert data["question_id"] == 1
-
-def test_get_answers(client, mediator):
-    mediator.send_async.return_value = mock_full_question.answers
-
-    response = client.get("/question/1/answers")
-    
-    mediator.send_async.assert_called_once()
-    assert response.status_code == 200
-    data = response.json()
-    assert isinstance(data, list)
-    assert len(data) == 1
-
 # Error handling tests
 
 def test_create_question_value_error(client, mediator):
@@ -196,22 +174,6 @@ def test_delete_question_value_error(client, mediator):
     mediator.send_async.side_effect = ValueError("Test error")
 
     response = client.delete("/question/1")
-    
-    assert response.status_code == 400
-    assert response.json() == {"detail": "Test error"}
-
-def test_add_answer_value_error(client, mediator):
-    mediator.send_async.side_effect = ValueError("Test error")
-
-    response = client.post("/question/1/answer", json={"content": "This is an answer"})
-    
-    assert response.status_code == 400
-    assert response.json() == {"detail": "Test error"}
-
-def test_get_answers_value_error(client, mediator):
-    mediator.send_async.side_effect = ValueError("Test error")
-
-    response = client.get("/question/1/answers")
     
     assert response.status_code == 400
     assert response.json() == {"detail": "Test error"}

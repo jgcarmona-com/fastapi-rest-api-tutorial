@@ -25,6 +25,7 @@ def init_db():
     from qna_api.domain.user import UserEntity
     from qna_api.domain.question import QuestionEntity
     from qna_api.domain.answer import AnswerEntity
+    from qna_api.domain.vote import VoteEntity
     from qna_api.features.auth.auth_service import AuthService
     from qna_api.features.user.repository import UserRepository
 

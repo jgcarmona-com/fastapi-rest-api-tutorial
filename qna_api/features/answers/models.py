@@ -3,6 +3,9 @@ from pydantic import BaseModel
 class AnswerCreate(BaseModel):
     content: str
 
+class AnswerUpdate(BaseModel):
+    content: str
+
 class AnswerResponse(BaseModel):
     id: int
     content: str
