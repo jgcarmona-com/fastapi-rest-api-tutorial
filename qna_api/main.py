@@ -7,7 +7,7 @@ from qna_api.features.answers.service import AnswerService
 from qna_api.features.auth.auth_service import AuthService
 from qna_api.features.auth.controller import AuthController
 from qna_api.core.database import get_db, init_db
-from qna_api.core.logging import get_logger
+from qna_api.crosscutting.logging import get_logger
 from qna_api.features.questions.controller import QuestionController
 from qna_api.features.user.controller import UserController
 from qna_api.features.user.repository import UserRepository

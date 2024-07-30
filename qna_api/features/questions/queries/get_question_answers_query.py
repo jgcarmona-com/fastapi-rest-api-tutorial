@@ -2,7 +2,7 @@ from mediatr import Mediator
 from qna_api.features.answers.models import AnswerResponse
 from qna_api.features.questions.repository import QuestionRepository
 from typing import List
-from qna_api.core.logging import get_logger
+from qna_api.crosscutting.logging import get_logger
 
 logger = get_logger(__name__)
 

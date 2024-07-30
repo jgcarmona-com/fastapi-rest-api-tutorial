@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from mediatr import Mediator
-from qna_api.features.auth.authorization import get_authenticated_user
+from qna_api.crosscutting.authorization import get_authenticated_user
 from qna_api.features.user.commands.create_user_command import CreateUserCommand
 from qna_api.features.user.commands.update_user_command import UpdateUserCommand
 from qna_api.features.user.models import User, UserCreate, UserUpdate

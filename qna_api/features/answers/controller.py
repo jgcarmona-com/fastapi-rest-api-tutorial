@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from qna_api.features.answers.models import AnswerCreate, AnswerResponse
 from qna_api.features.answers.service import AnswerService
-from qna_api.features.auth.authorization import get_authenticated_user
-from qna_api.core.logging import get_logger
+from qna_api.crosscutting.authorization import get_authenticated_user
+from qna_api.crosscutting.logging import get_logger
 from qna_api.features.user.models import User
 
 logger = get_logger(__name__)

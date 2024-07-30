@@ -1,6 +1,6 @@
 from mediatr import Mediator
 from qna_api.features.auth.auth_service import AuthService
-from qna_api.core.logging import get_logger
+from qna_api.crosscutting.logging import get_logger
 from qna_api.domain.role import Role
 from qna_api.domain.user import UserEntity
 from qna_api.features.user.models import UserCreate

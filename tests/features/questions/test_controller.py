@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from unittest.mock import MagicMock
 from mediatr import Mediator
 from qna_api.main import create_app
-from qna_api.features.auth.authorization import get_admin_user, get_authenticated_user
+from qna_api.crosscutting.authorization import get_admin_user, get_authenticated_user
 from qna_api.features.user.models import User
 
 from .models import mock_question, mock_full_question, mock_questions_list, mock_answer

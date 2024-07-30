@@ -3,7 +3,7 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import MagicMock
 from qna_api.main import create_app
-from qna_api.features.auth.authorization import get_authenticated_user
+from qna_api.crosscutting.authorization import get_authenticated_user
 from qna_api.features.user.models import User
 
 from .models import mock_new_user, mock_updated_user, mock_updated_user

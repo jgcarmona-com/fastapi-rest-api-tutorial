@@ -3,7 +3,7 @@ from fastapi import Depends
 from fastapi.testclient import TestClient
 from jose import jwt
 from datetime import datetime, timedelta, timezone
-from qna_api.features.auth.authorization import get_admin_user, get_authenticated_user
+from qna_api.crosscutting.authorization import get_admin_user, get_authenticated_user
 from qna_api.main import app  
 from qna_api.core.config import settings
 from qna_api.features.user.repository import UserRepository

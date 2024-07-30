@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from pydantic import Field, ValidationError
 from pydantic_settings import BaseSettings
-from qna_api.core.logging import get_logger
+from qna_api.crosscutting.logging import get_logger
 
 load_dotenv()  
 

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from mediatr import Mediator
 from qna_api.features.answers.models import AnswerCreate, AnswerResponse
-from qna_api.features.auth.authorization import get_admin_user, get_authenticated_user
-from qna_api.core.logging import get_logger
+from qna_api.crosscutting.authorization import get_admin_user, get_authenticated_user
+from qna_api.crosscutting.logging import get_logger
 from qna_api.features.questions.commands.add_answer_command import AddAnswerCommand
 from qna_api.features.questions.commands.create_question_command import CreateQuestionCommand
 from qna_api.features.questions.commands.delete_question_command import DeleteQuestionCommand

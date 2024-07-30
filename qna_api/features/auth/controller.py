@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from qna_api.features.auth.models import Token
 from qna_api.features.auth.auth_service import AuthService
-from qna_api.core.logging import get_logger
+from qna_api.crosscutting.logging import get_logger
 from datetime import timedelta
 from qna_api.core.config import settings
 
