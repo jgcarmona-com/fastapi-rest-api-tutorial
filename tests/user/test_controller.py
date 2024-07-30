@@ -43,6 +43,15 @@ def test_create_user(client, mediator):
     assert data["full_name"] == "New User"
     mediator.send_async.assert_called_once()
 
+def test_create_user_value_error(client, mediator):
+    mediator.send_async.side_effect = ValueError("Test error")
+
+    response = client.post("/user", json={"username": "newuser", "email": "newuser@example.com", "full_name": "New User", "password": "password123"})
+    
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Test error"}
+    mediator.send_async.assert_called_once()
+
 def test_me(client):
     response = client.get("user/me")
     
@@ -62,4 +71,13 @@ def test_update_user(client, mediator):
     assert data["username"] == mock_updated_user.username
     assert data["email"] == mock_updated_user.email
     assert data["full_name"] == mock_updated_user.full_name
+    mediator.send_async.assert_called_once()
+
+def test_update_user_value_error(client, mediator):
+    mediator.send_async.side_effect = ValueError("Test error")
+
+    response = client.put("user/1", json={"username": "updateduser", "email": "updateduser@example.com", "full_name": "Updated User"})
+    
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Test error"}
     mediator.send_async.assert_called_once()

@@ -51,6 +51,8 @@ class QuestionController:
     async def get_question(self, question_id: int, current_user: User = Depends(get_authenticated_user)):
         try:
             question = await self.mediator.send_async(GetQuestionQuery(question_id))
+            if not question:
+                raise ValueError(f"Question {question_id} not found")
             return QuestionResponse.model_validate(question, from_attributes=True)
         except ValueError as e:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))

@@ -6,7 +6,9 @@ mock_question = QuestionResponse(
     id=1,
     title="Sample Question",
     description="This is a sample question",
-    user_id=1
+    user_id=1,
+    answers=[],
+    
 )
 
 mock_answer = AnswerResponse(
