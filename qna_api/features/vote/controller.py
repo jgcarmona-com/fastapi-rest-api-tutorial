@@ -17,7 +17,7 @@ class VotesController:
 
     def _add_routes(self):
         self.router.post("/question/{question_id}/vote", response_model=Vote)(self.vote_on_question)
-        self.router.post("/answer/{answer_id}/vote", response_model=Vote)(self.vote_on_answer)
+        self.router.post("/question/{question_id}/answer/{answer_id}/vote", response_model=Vote)(self.vote_on_answer)
 
     async def vote_on_question(self, question_id: int, vote: VoteCreate, current_user: User = Depends(get_authenticated_user)):
         logger.info(f"{current_user.full_name} is casting a vote on question {question_id}")

@@ -17,8 +17,14 @@ class User(BaseModel):
     class Config:
         from_attributes = True
 
-class UserCreate(User):
-    password: str
+class SignupModel(BaseModel):
+    username: str
+    email: EmailStr 
+    full_name: str
+    password: str 
+
+    class Config:
+        from_attributes = True
 
 class UserUpdate(User):
     password: str | None = None

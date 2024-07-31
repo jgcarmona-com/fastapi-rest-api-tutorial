@@ -34,7 +34,7 @@ def authenticated_user():
 def test_create_user(client, mediator):
     mediator.send_async.return_value = mock_new_user
 
-    response = client.post("/user", json={"username": "newuser", "email": "newuser@example.com", "full_name": "New User", "password": "password123"})
+    response = client.post("/user/signup", json={"username": "newuser", "email": "newuser@example.com", "full_name": "New User", "password": "password123"})
     
     assert response.status_code == 200
     data = response.json()
@@ -46,7 +46,7 @@ def test_create_user(client, mediator):
 def test_create_user_value_error(client, mediator):
     mediator.send_async.side_effect = ValueError("Test error")
 
-    response = client.post("/user", json={"username": "newuser", "email": "newuser@example.com", "full_name": "New User", "password": "password123"})
+    response = client.post("/user/signup", json={"username": "newuser", "email": "newuser@example.com", "full_name": "New User", "password": "password123"})
     
     assert response.status_code == 400
     assert response.json() == {"detail": "Test error"}

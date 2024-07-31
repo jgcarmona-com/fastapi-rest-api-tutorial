@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import RedirectResponse
 from mediatr import Mediator
+from qna_api.crosscutting.notification_service import NotificationService
 from qna_api.features.admin.controller import AdminController
 from qna_api.features.answers.controller import AnswerController
 from qna_api.features.auth.auth_service import AuthService
@@ -9,8 +10,11 @@ from qna_api.features.auth.controller import AuthController
 from qna_api.core.database import get_db, init_db
 from qna_api.crosscutting.logging import get_logger
 from qna_api.features.questions.controller import QuestionController
+from qna_api.features.user.commands.signup_command import SignupCommand, SignupCommandHandler
 from qna_api.features.user.controller import UserController
 from qna_api.features.user.repository import UserRepository
+from qna_api.core.constants import TITLE, DESCRIPTION, CONTACT, LICENSE_INFO, SWAGGER_UI_PARAMETERS, SWAGGER_FAVICON_URL
+
 import debugpy
 import os
 import uvicorn
@@ -26,14 +30,16 @@ async def lifespan(app: FastAPI):
 
 def create_app(
         mediator=None,
-        auth_service=None):
+        auth_service=None,
+        notification_service=None):
     app = FastAPI(
-        title="API",
-        description="API Description",
+        title=TITLE,
+        description=DESCRIPTION,
         version="0.1",
-        contact={},
-        license_info={},
-        swagger_ui_parameters={},
+        contact=CONTACT,
+        license_info=LICENSE_INFO,
+        swagger_ui_parameters=SWAGGER_UI_PARAMETERS,
+        swagger_favicon_url=SWAGGER_FAVICON_URL,
         lifespan=lifespan
     )
 
@@ -43,6 +49,13 @@ def create_app(
         mediator = Mediator()
     if not auth_service:
         auth_service = AuthService(user_repository)
+
+    # NOTE: This is an example on how to register handlers that has crosscurring dependencies:
+    # if not notification_service:
+    #     notification_service = NotificationService(constructor_params)
+    #   mediator.register_handler(SignupCommandHandler(user_repository, notification_service)  # - Instantiate the class with its dependenices,
+    #                                                 .handle,                                 # - Pass the method to be called
+    #                                                  SignupCommand)                          # - Pass the Request class to be handled
 
     auth_controller = AuthController(auth_service)
     user_controller = UserController(mediator)

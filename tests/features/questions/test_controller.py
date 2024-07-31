@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import MagicMock
 from mediatr import Mediator
+from qna_api.crosscutting.notification_service import NotificationService
 from qna_api.main import create_app
 from qna_api.crosscutting.authorization import get_admin_user, get_authenticated_user
 from qna_api.features.user.models import User
@@ -10,7 +11,7 @@ from .models import mock_question, mock_full_question, mock_questions_list, mock
 
 # Configure Test Client
 @pytest.fixture
-def client(mediator, authenticated_user):
+def client(mediator, authenticated_user):    
     app = create_app(mediator=mediator)
 
     def _get_authenticated_user():
@@ -25,6 +26,11 @@ def client(mediator, authenticated_user):
 @pytest.fixture
 def mediator():
     return MagicMock(spec=Mediator)
+
+# Mock NotificationService
+@pytest.fixture
+def notification_service():
+    return MagicMock(spec=NotificationService)
 
 # Mock authenticated user
 @pytest.fixture
@@ -47,7 +53,7 @@ def test_create_question(client, mediator):
     assert data["description"] == "This is a sample question"
 
 def test_get_all_questions(client, mediator, admin_user):
-    app = create_app(mediator=mediator)
+    app = create_app(mediator=mediator, notification_service=notification_service)
 
     def _get_admin_user():
         return admin_user

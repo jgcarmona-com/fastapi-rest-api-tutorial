@@ -54,7 +54,7 @@ def test_vote_on_question_value_error(client, mediator):
 def test_vote_on_answer(client, mediator):
     mediator.send_async.return_value = Vote(id=1, vote_value=1, user_id=1, question_id=None, answer_id=1)
 
-    response = client.post("/answer/1/vote", json={"vote_value": 1})
+    response = client.post("/question/1/answer/1/vote", json={"vote_value": 1})
     
     assert response.status_code == 200
     data = response.json()
@@ -65,7 +65,7 @@ def test_vote_on_answer(client, mediator):
 def test_vote_on_answer_value_error(client, mediator):
     mediator.send_async.side_effect = ValueError("Test error")
 
-    response = client.post("/answer/1/vote", json={"vote_value": 1})
+    response = client.post("/question/1/answer/1/vote", json={"vote_value": 1})
     
     assert response.status_code == 400
     assert response.json() == {"detail": "Test error"}
