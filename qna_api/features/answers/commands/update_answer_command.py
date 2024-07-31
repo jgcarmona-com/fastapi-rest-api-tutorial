@@ -1,6 +1,6 @@
 from mediatr import Mediator
 from qna_api.features.answers.repository import AnswerRepository
-from qna_api.features.answers.models import AnswerUpdate, AnswerResponse
+from qna_api.features.answers.models import AnswerUpdate, Answer
 from qna_api.crosscutting.logging import get_logger
 
 logger = get_logger(__name__)
@@ -15,7 +15,7 @@ class UpdateAnswerCommandHandler:
     def __init__(self):
         self.answer_repository = AnswerRepository.instance()
 
-    def handle(self, command: UpdateAnswerCommand) -> AnswerResponse:
+    def handle(self, command: UpdateAnswerCommand) -> Answer:
         logger.info(f"Updating answer {command.answer_id}")
         answer = self.answer_repository.get(command.answer_id)
         if not answer:

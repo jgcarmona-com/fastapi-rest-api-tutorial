@@ -1,8 +1,7 @@
-# qna_api/features/vote/controller.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from qna_api.features.vote.commands.add_answer_vote_command import AddAnswerVoteCommand
 from qna_api.features.vote.commands.add_question_vote_command import AddQuestionVoteCommand
-from qna_api.features.vote.models import VoteCreate, VoteResponse
+from qna_api.features.vote.models import VoteCreate, Vote
 from qna_api.crosscutting.authorization import get_authenticated_user
 from qna_api.crosscutting.logging import get_logger
 from qna_api.features.user.models import User
@@ -17,8 +16,8 @@ class VotesController:
         self._add_routes()
 
     def _add_routes(self):
-        self.router.post("/question/{question_id}/vote", response_model=VoteResponse)(self.vote_on_question)
-        self.router.post("/answer/{answer_id}/vote", response_model=VoteResponse)(self.vote_on_answer)
+        self.router.post("/question/{question_id}/vote", response_model=Vote)(self.vote_on_question)
+        self.router.post("/answer/{answer_id}/vote", response_model=Vote)(self.vote_on_answer)
 
     async def vote_on_question(self, question_id: int, vote: VoteCreate, current_user: User = Depends(get_authenticated_user)):
         logger.info(f"{current_user.full_name} is casting a vote on question {question_id}")

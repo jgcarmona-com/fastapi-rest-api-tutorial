@@ -2,7 +2,7 @@ from typing import List
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from qna_api.features.answers.models import AnswerResponse
+from qna_api.features.answers.models import Answer
 from qna_api.core.database import Base
 
 class QuestionBase(BaseModel):
@@ -20,19 +20,19 @@ class QuestionBase(BaseModel):
 class QuestionCreate(QuestionBase):
     pass
 
-class QuestionResponse(QuestionBase):
+class Question(QuestionBase):
     id: int
     user_id: int
 
     class Config:
         from_attributes = True
 
-class FullQuestionResponse(BaseModel):
+class FullQuestion(BaseModel):
     id: int
     title: str
     description: str
     user_id: int
-    answers: List[AnswerResponse]
+    answers: List[Answer]
 
     class Config:
         from_attributes = True

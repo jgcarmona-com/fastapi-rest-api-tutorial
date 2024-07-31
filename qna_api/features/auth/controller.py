@@ -1,4 +1,3 @@
-# qna_api/auth/controller.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from qna_api.features.auth.models import Token

@@ -1,6 +1,6 @@
 from mediatr import Mediator
 from qna_api.domain.vote import VoteEntity
-from qna_api.features.vote.models import VoteCreate, VoteResponse
+from qna_api.features.vote.models import VoteCreate, Vote
 from qna_api.features.vote.repository import VoteRepository
 from qna_api.features.answers.repository import AnswerRepository
 
@@ -16,7 +16,7 @@ class AddAnswerVoteCommandHandler:
         self.vote_repository = VoteRepository.instance()
         self.answer_repository = AnswerRepository.instance()
 
-    def handle(self, command: AddAnswerVoteCommand) -> VoteResponse:
+    def handle(self, command: AddAnswerVoteCommand) -> Vote:
         vote_entity = VoteEntity(
             user_id=command.user_id,
             answer_id=command.answer_id,
@@ -28,4 +28,4 @@ class AddAnswerVoteCommandHandler:
         answer.score += command.vote.vote_value
         self.answer_repository.update(answer)
 
-        return VoteResponse.model_validate(vote_entity, from_attributes=True)
+        return Vote.model_validate(vote_entity, from_attributes=True)

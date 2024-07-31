@@ -1,5 +1,5 @@
 from mediatr import Mediator
-from qna_api.features.answers.models import AnswerCreate, AnswerResponse
+from qna_api.features.answers.models import AnswerCreate, Answer
 from qna_api.domain.answer import AnswerEntity
 from qna_api.features.questions.repository import QuestionRepository
 from qna_api.crosscutting.logging import get_logger
@@ -17,7 +17,7 @@ class AddAnswerCommandHandler:
     def __init__(self):
         self.question_repository = QuestionRepository.instance()
 
-    def handle(self, request: AddAnswerCommand) -> AnswerResponse:
+    def handle(self, request: AddAnswerCommand) -> Answer:
         logger.info(f"User {request.user_id} is adding an answer to question {request.question_id}")
         db_answer = AnswerEntity(
             content=request.answer.content,
@@ -25,4 +25,4 @@ class AddAnswerCommandHandler:
             question_id=request.question_id
         )
         self.question_repository.add_answer(db_answer)
-        return AnswerResponse.model_validate(db_answer, from_attributes=True)
+        return Answer.model_validate(db_answer, from_attributes=True)

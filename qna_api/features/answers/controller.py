@@ -1,7 +1,6 @@
-# qna_api/features/answers/controller.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from mediatr import Mediator
-from qna_api.features.answers.models import AnswerCreate, AnswerUpdate, AnswerResponse
+from qna_api.features.answers.models import AnswerCreate, AnswerUpdate, Answer
 from qna_api.crosscutting.authorization import get_authenticated_user
 from qna_api.crosscutting.logging import get_logger
 from qna_api.features.user.models import User
@@ -21,11 +20,11 @@ class AnswerController:
         self._add_routes()
 
     def _add_routes(self):
-        self.router.get("/{question_id}/answer/{answer_id}", response_model=AnswerResponse)(self.get_answer)
-        self.router.put("/{question_id}/answer/{answer_id}", response_model=AnswerResponse)(self.update_answer)
-        self.router.delete("/{question_id}/answer/{answer_id}", response_model=AnswerResponse)(self.delete_answer)
-        self.router.post("/{question_id}/answer", response_model=AnswerResponse)(self.add_answer)
-        self.router.get("/{question_id}/answers", response_model=List[AnswerResponse])(self.get_question_answers)
+        self.router.get("/{question_id}/answer/{answer_id}", response_model=Answer)(self.get_answer)
+        self.router.put("/{question_id}/answer/{answer_id}", response_model=Answer)(self.update_answer)
+        self.router.delete("/{question_id}/answer/{answer_id}", response_model=Answer)(self.delete_answer)
+        self.router.post("/{question_id}/answer", response_model=Answer)(self.add_answer)
+        self.router.get("/{question_id}/answers", response_model=List[Answer])(self.get_question_answers)
 
     async def get_answer(self, question_id: int, answer_id: int, current_user: User = Depends(get_authenticated_user)):
         logger.info(f"{current_user.full_name} is getting answer {answer_id} for question {question_id}")
@@ -56,7 +55,7 @@ class AnswerController:
         logger.info(f"{current_user.full_name} is creating an answer for question {question_id}")
         try:
             created_answer = await self.mediator.send_async(AddAnswerCommand(question_id, answer, current_user.id))
-            return AnswerResponse.model_validate(created_answer, from_attributes=True)
+            return Answer.model_validate(created_answer, from_attributes=True)
         except ValueError as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
@@ -64,6 +63,6 @@ class AnswerController:
         logger.info(f"{current_user.full_name} is getting answers for question {question_id}")
         try:
             answers = await self.mediator.send_async(GetQuestionAnswersQuery(question_id))
-            return [AnswerResponse.model_validate(answer, from_attributes=True) for answer in answers]
+            return [Answer.model_validate(answer, from_attributes=True) for answer in answers]
         except ValueError as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

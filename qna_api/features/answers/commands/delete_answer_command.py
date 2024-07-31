@@ -1,6 +1,6 @@
 from mediatr import Mediator
 from qna_api.features.answers.repository import AnswerRepository
-from qna_api.features.answers.models import AnswerResponse
+from qna_api.features.answers.models import Answer
 
 from qna_api.crosscutting.logging import get_logger
 
@@ -15,7 +15,7 @@ class DeleteAnswerCommandHandler:
     def __init__(self, answer_repository: AnswerRepository):
         self.answer_repository = answer_repository
 
-    def handle(self, command: DeleteAnswerCommand) -> AnswerResponse:
+    def handle(self, command: DeleteAnswerCommand) -> Answer:
         logger.info(f"Deleting answer {command.answer_id}")
         answer = self.answer_repository.get(command.answer_id)
         if not answer:

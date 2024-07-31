@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import RedirectResponse
 from mediatr import Mediator
+from qna_api.features.admin.controller import AdminController
 from qna_api.features.answers.controller import AnswerController
 from qna_api.features.auth.auth_service import AuthService
 from qna_api.features.auth.controller import AuthController
@@ -48,12 +49,14 @@ def create_app(
     question_controller = QuestionController(mediator)
     answer_controller = AnswerController(mediator)
     votes_controller = VotesController(mediator)
+    admin_controller = AdminController(mediator)
 
     app.include_router(auth_controller.router, prefix="/auth", tags=["auth"])
     app.include_router(user_controller.router, prefix="/user", tags=["user"])
     app.include_router(question_controller.router, prefix="/question", tags=["question"])
-    app.include_router(answer_controller.router, prefix="/question", tags=["Answer"]) # Depends on question
+    app.include_router(answer_controller.router, prefix="/question", tags=["Answer"]) 
     app.include_router(votes_controller.router, tags=["Vote"])
+    app.include_router(admin_controller.router, prefix="/admin", tags=["admin"])
 
     return app
 

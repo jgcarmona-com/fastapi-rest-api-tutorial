@@ -1,8 +1,8 @@
-from qna_api.features.questions.models import QuestionResponse, FullQuestionResponse
-from qna_api.features.answers.models import AnswerResponse
+from qna_api.features.questions.models import Question, FullQuestion
+from qna_api.features.answers.models import Answer
 
 # Some useful mock data
-mock_question = QuestionResponse(
+mock_question = Question(
     id=1,
     title="Sample Question",
     description="This is a sample question",
@@ -11,14 +11,14 @@ mock_question = QuestionResponse(
     
 )
 
-mock_answer = AnswerResponse(
+mock_answer = Answer(
     id=1, 
     question_id=1, 
     user_id=1, 
     content="This is an answer"
 )
 
-mock_full_question = FullQuestionResponse(
+mock_full_question = FullQuestion(
     id=1,
     title="Sample Question",
     description="This is a sample question",

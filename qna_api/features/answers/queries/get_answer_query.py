@@ -1,6 +1,6 @@
 from mediatr import Mediator
 from qna_api.features.answers.repository import AnswerRepository
-from qna_api.features.answers.models import AnswerResponse
+from qna_api.features.answers.models import Answer
 from qna_api.crosscutting.logging import get_logger
 
 logger = get_logger(__name__)
@@ -14,7 +14,7 @@ class GetAnswerQueryHandler:
     def __init__(self, answer_repository: AnswerRepository):
         self.answer_repository = answer_repository
 
-    def handle(self, query: GetAnswerQuery) -> AnswerResponse:
+    def handle(self, query: GetAnswerQuery) -> Answer:
         logger.info(f"Getting answer {query.answer_id}")
         answer = self.answer_repository.get(query.answer_id)
         if not answer:

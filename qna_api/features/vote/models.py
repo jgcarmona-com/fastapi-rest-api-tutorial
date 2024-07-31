@@ -1,10 +1,9 @@
-# qna_api/features/vote/models.py
 from pydantic import BaseModel
 
 class VoteCreate(BaseModel):
     vote_value: int  # 1 for upvote, -1 for downvote
 
-class VoteResponse(BaseModel):
+class Vote(BaseModel):
     id: int
     vote_value: int
     user_id: int

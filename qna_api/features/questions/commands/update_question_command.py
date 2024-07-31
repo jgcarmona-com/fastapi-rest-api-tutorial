@@ -1,5 +1,5 @@
 from mediatr import Mediator
-from qna_api.features.questions.models import QuestionCreate, QuestionResponse
+from qna_api.features.questions.models import QuestionCreate, Question
 from qna_api.features.questions.repository import QuestionRepository
 
 class UpdateQuestionCommand:
@@ -13,8 +13,8 @@ class UpdateQuestionCommandHandler:
     def __init__(self):
         self.question_repository = QuestionRepository.instance()
 
-    def handle(self, request: UpdateQuestionCommand) -> QuestionResponse:
+    def handle(self, request: UpdateQuestionCommand) -> Question:
         db_question = self.question_repository.update(request.question_id, request.question, request.user_id)
         if not db_question:
             raise ValueError("Question not found or not authorized to update")
-        return QuestionResponse.model_validate(db_question, from_attributes=True)
+        return Question.model_validate(db_question, from_attributes=True)

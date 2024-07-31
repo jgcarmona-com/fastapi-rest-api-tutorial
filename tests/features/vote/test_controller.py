@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from qna_api.main import create_app
 from qna_api.crosscutting.authorization import get_authenticated_user
 from qna_api.features.user.models import User
-from qna_api.features.vote.models import VoteCreate, VoteResponse
+from qna_api.features.vote.models import VoteCreate, Vote
 from mediatr import Mediator
 
 # Configure Test Client
@@ -32,7 +32,7 @@ def authenticated_user():
     return User(id=1, username="testuser", full_name="Test User", email="testuser@example.com", roles=["user"])
 
 def test_vote_on_question(client, mediator):
-    mediator.send_async.return_value = VoteResponse(id=1, vote_value=1, user_id=1, question_id=1, answer_id=None)
+    mediator.send_async.return_value = Vote(id=1, vote_value=1, user_id=1, question_id=1, answer_id=None)
 
     response = client.post("/question/1/vote", json={"vote_value": 1})
     
@@ -52,7 +52,7 @@ def test_vote_on_question_value_error(client, mediator):
     mediator.send_async.assert_called_once()
 
 def test_vote_on_answer(client, mediator):
-    mediator.send_async.return_value = VoteResponse(id=1, vote_value=1, user_id=1, question_id=None, answer_id=1)
+    mediator.send_async.return_value = Vote(id=1, vote_value=1, user_id=1, question_id=None, answer_id=1)
 
     response = client.post("/answer/1/vote", json={"vote_value": 1})
     

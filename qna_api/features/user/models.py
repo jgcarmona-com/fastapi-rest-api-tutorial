@@ -7,24 +7,18 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: str | None = None
 
-class UserBase(BaseModel):
+class User(BaseModel):
+    id: int | None = None
     username: str
     email: EmailStr | None = None
     full_name: str | None = None
-
-class UserCreate(UserBase):
-    password: str
-
-class UserUpdate(BaseModel):
-    username: str = None
-    email: str = None
-    full_name: str = None
-    disabled: bool = None
-    password: str = None
-
-class User(UserBase):
-    id: int
     disabled: bool | None = None
 
     class Config:
         from_attributes = True
+
+class UserCreate(User):
+    password: str
+
+class UserUpdate(User):
+    password: str | None = None

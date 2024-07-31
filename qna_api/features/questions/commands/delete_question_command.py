@@ -1,5 +1,5 @@
 from mediatr import Mediator
-from qna_api.features.questions.models import QuestionResponse
+from qna_api.features.questions.models import Question
 from qna_api.features.questions.repository import QuestionRepository
 
 class DeleteQuestionCommand:
@@ -12,8 +12,8 @@ class DeleteQuestionCommandHandler:
     def __init__(self):
         self.question_repository = QuestionRepository.instance()
 
-    def handle(self, request: DeleteQuestionCommand) -> QuestionResponse:
+    def handle(self, request: DeleteQuestionCommand) -> Question:
         db_question = self.question_repository.delete(request.question_id, request.user_id)
         if not db_question:
             raise ValueError("Question not found or not authorized to delete")
-        return QuestionResponse.model_validate(db_question, from_attributes=True)
+        return Question.model_validate(db_question, from_attributes=True)

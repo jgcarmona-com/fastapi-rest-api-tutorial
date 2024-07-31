@@ -1,5 +1,5 @@
 from mediatr import Mediator
-from qna_api.features.answers.models import AnswerResponse
+from qna_api.features.answers.models import Answer
 from qna_api.features.questions.repository import QuestionRepository
 from typing import List
 from qna_api.crosscutting.logging import get_logger
@@ -15,7 +15,7 @@ class GetQuestionAnswersQueryHandler:
     def __init__(self):
         self.question_repository = QuestionRepository.instance()
 
-    def handle(self, request: GetQuestionAnswersQuery) -> List[AnswerResponse]:
+    def handle(self, request: GetQuestionAnswersQuery) -> List[Answer]:
         logger.info(f"Getting answers for question {request.question_id}")
         answers = self.question_repository.get_answers(request.question_id)
-        return [AnswerResponse.model_validate(answer, from_attributes=True) for answer in answers]
+        return [Answer.model_validate(answer, from_attributes=True) for answer in answers]

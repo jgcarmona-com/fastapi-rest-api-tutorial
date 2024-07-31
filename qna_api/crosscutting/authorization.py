@@ -20,6 +20,11 @@ def get_authenticated_user(token: str = Depends(oauth2_scheme), user_repo: UserR
         detail="Invalid token",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
+    account_disabled_exception = HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Your account is disabled. Please contact support.",
+    )
     try:
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         username: str = payload.get("sub")
@@ -32,6 +37,8 @@ def get_authenticated_user(token: str = Depends(oauth2_scheme), user_repo: UserR
     user = user_repo.get_by_username(token_data.username)
     if user is None:
         raise credentials_exception
+    if user.disabled:
+        raise account_disabled_exception
     return user
 
 def get_admin_user(token: str = Depends(oauth2_scheme), user_repo: UserRepository = Depends(UserRepository.instance)):

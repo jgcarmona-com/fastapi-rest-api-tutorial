@@ -6,7 +6,7 @@ class AnswerCreate(BaseModel):
 class AnswerUpdate(BaseModel):
     content: str
 
-class AnswerResponse(BaseModel):
+class Answer(BaseModel):
     id: int
     content: str
     question_id: int
