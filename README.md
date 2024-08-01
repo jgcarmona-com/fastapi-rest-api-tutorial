@@ -83,7 +83,14 @@ qna_api/
     ```
 
 5. Configura las variables de entorno:
-    Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
+   Antes de iniciar la aplicación, necesitas configurar las variables de entorno. Sigue estos pasos:
+
+    1. Copia el archivo `.env.example` a `.env`:
+    ```sh
+    cp .env.example .env
+    ```
+
+    2. Rellena las variables de entorno en el archivo `.env` con tus propios valores:
     ```
     SECRET_KEY=your_secret_key
     ALGORITHM=HS256
