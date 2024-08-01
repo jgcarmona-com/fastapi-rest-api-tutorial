@@ -10,7 +10,7 @@ from qna_api.features.user.repository import UserRepository
 logger = get_logger(__name__)
 
 class SignupCommand():    
-    def __init__(self,user:SignupModel):
+    def __init__(self, user: SignupModel):
         self.user = user
         
 @Mediator.handler
@@ -18,8 +18,9 @@ class SignupCommandHandler():
     def __init__(self):
         self.user_repository = UserRepository.instance()
         self.notification_service = NotificationService.from_env_vars()
+        self.auth_service = AuthService(self.user_repository)
 
-    def handle(self, request: SignupCommand) -> UserEntity:   
+    async def handle(self, request: SignupCommand) -> UserEntity:   
         logger.info(f"Creating user: {request.user.username}")      
         user = UserEntity(
             username=request.user.username,
@@ -32,8 +33,9 @@ class SignupCommandHandler():
 
         try:
             self.user_repository.create(user)
-            verification_url = f"https://yourapp.com/verify-email/{user.id}"
-            self.notification_service.send_email_verification(user.email, verification_url)
+            verification_token = self.auth_service.create_verification_token(user.id)
+            verification_url = f"http://localhost:8000/user/validate?token={verification_token}"
+            await self.notification_service.send_email_verification(user.email, verification_url)
         except ValueError as e:
             raise ValueError(f"Error creating user: {str(e)}")
         

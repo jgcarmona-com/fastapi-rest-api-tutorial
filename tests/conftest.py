@@ -1,6 +1,8 @@
 from unittest.mock import MagicMock
 import pytest
+from fastapi.testclient import TestClient
 from qna_api.core.config import settings
+from qna_api.core.database import get_db, init_db
 
 @pytest.fixture(scope="session", autouse=True)
 def load_settings():
@@ -13,6 +15,9 @@ def load_settings():
     settings.initial_admin_email = "admin@example.com"
     settings.initial_admin_password = "P@ssw0rd!"
 
+    
+    # Mock init_db to avoid its execution
+    # monkeypatch.setattr('qna_api.core.database.init_db', lambda: None)
     yield
 
 @pytest.fixture(scope='module')
@@ -23,9 +28,7 @@ def mock_db_session():
 
 @pytest.fixture
 def client(mock_db_session):
-    from fastapi.testclient import TestClient
     from qna_api.main import app 
-    from qna_api.core.database import get_db
     def get_db_override():
         return mock_db_session
 

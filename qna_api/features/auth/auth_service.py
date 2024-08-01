@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
-from jose import jwt
+from fastapi import HTTPException, status
+from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
 from qna_api.core.config import settings
 from qna_api.domain.user import UserEntity
@@ -26,6 +27,21 @@ class AuthService:
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
         return encoded_jwt
+    
+    def create_verification_token(self, user_id: int, expires_delta: timedelta | None = None):
+        expire = datetime.now(timezone.utc) + (expires_delta or timedelta(hours=24))
+        to_encode = {"user_id": user_id, "exp": expire}
+        return jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
+    
+    def decode_verification_token(self, token: str):
+        try:
+            payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+            return payload
+        except ExpiredSignatureError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Token has expired")
+        except JWTError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token")
+    
     
     @staticmethod
     def get_password_hash(password: str) -> str:

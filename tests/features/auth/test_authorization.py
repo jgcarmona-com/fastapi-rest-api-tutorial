@@ -18,14 +18,20 @@ class FakeUserRepository(UserRepository):
     def __init__(self):
         self.users = {
             "testuser": UserEntity(
+                id=1,
                 username="testuser",
-                roles="user",
-                hashed_password="$2b$12$KIX/Qd/bZ5at5fYniGkZkeWGyVgt9DZyZye69psA3kFhi5LbYEmBu"  # 'password' hashed
+                email="test@example.com",
+                full_name="Test User",
+                hashed_password="$2b$12$KIX/Qd/bZ5at5fYniGkZkeWGyVgt9DZyZye69psA3kFhi5LbYEmBu",  # 'password' hashed
+                roles="user"
             ),
             "admin": UserEntity(
+                id=2,
                 username="admin",
-                roles="user,admin",
-                hashed_password="$2b$12$KIX/Qd/bZ5at5fYniGkZkeWGyVgt9DZyZye69psA3kFhi5LbYEmBu" # 'password' hashed
+                email="admin@example.com",
+                full_name="Admin User",
+                hashed_password="$2b$12$KIX/Qd/bZ5at5fYniGkZkeWGyVgt9DZyZye69psA3kFhi5LbYEmBu",  # 'password' hashed
+                roles="admin"
             )
         }
     
