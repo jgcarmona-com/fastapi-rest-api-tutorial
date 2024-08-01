@@ -17,12 +17,20 @@ class User(BaseModel):
     class Config:
         from_attributes = True
 
+
 class SignupModel(BaseModel):
     username: str
     email: EmailStr 
     full_name: str
     password: str 
 
+    class Config:
+        from_attributes = True
+
+class SignupResponse(BaseModel):
+    user: User
+    message: str
+    
     class Config:
         from_attributes = True
 

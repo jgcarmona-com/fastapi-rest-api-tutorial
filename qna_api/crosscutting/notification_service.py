@@ -24,6 +24,11 @@ class NotificationService:
         return cls(smtp_server, smtp_port, smtp_username, smtp_password, sender_email)
     
     async def send_email_verification(self, recipient_email: str, verification_url: str):
+        use_smtp = os.getenv('USE_SMTP', 'false').lower() == 'true'
+        if not use_smtp:
+            logger.warn("SMTP not configured. Users require admin validation.")
+            return False  # Indicate that email was not sent
+        
         logger.info(f"Sending email verification to {recipient_email} with URL: {verification_url}")
         message = MIMEMultipart("alternative")
         message["Subject"] = "Email Verification"

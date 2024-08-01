@@ -38,9 +38,10 @@ def test_create_user(client, mediator):
     
     assert response.status_code == 200
     data = response.json()
-    assert data["username"] == "newuser"
-    assert data["email"] == "newuser@example.com"
-    assert data["full_name"] == "New User"
+    user = data["user"]
+    assert user["username"] == "newuser"
+    assert user["email"] == "newuser@example.com"
+    assert user["full_name"] == "New User"
     mediator.send_async.assert_called_once()
 
 def test_create_user_value_error(client, mediator):

@@ -4,7 +4,7 @@ from qna_api.features.auth.auth_service import AuthService
 from qna_api.crosscutting.logging import get_logger
 from qna_api.domain.role import Role
 from qna_api.domain.user import UserEntity
-from qna_api.features.user.models import SignupModel
+from qna_api.features.user.models import SignupModel, SignupResponse, User
 from qna_api.features.user.repository import UserRepository
 
 logger = get_logger(__name__)
@@ -20,8 +20,8 @@ class SignupCommandHandler():
         self.notification_service = NotificationService.from_env_vars()
         self.auth_service = AuthService(self.user_repository)
 
-    async def handle(self, request: SignupCommand) -> UserEntity:   
-        logger.info(f"Creating user: {request.user.username}")      
+    async def handle(self, request: SignupCommand) -> SignupResponse:
+        logger.info(f"Creating user: {request.user.username}")
         user = UserEntity(
             username=request.user.username,
             email=request.user.email,
@@ -35,8 +35,17 @@ class SignupCommandHandler():
             self.user_repository.create(user)
             verification_token = self.auth_service.create_verification_token(user.id)
             verification_url = f"http://localhost:8000/user/validate?token={verification_token}"
-            await self.notification_service.send_email_verification(user.email, verification_url)
+            email_sent = await self.notification_service.send_email_verification(user.email, verification_url)
+
+            if email_sent:
+                message = "A verification email has been sent. Please check your inbox."
+            else:
+                message = "Your account requires admin validation."
+
+            return SignupResponse(
+                user=User.model_validate(user, from_attributes=True),
+                message=message
+            )
+
         except ValueError as e:
             raise ValueError(f"Error creating user: {str(e)}")
-        
-        return user
